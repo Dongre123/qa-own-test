@@ -1,0 +1,33 @@
+name: QA Login CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  qa-build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: docker build -t qa-login-app:v1 .
+
+      - name: Run Docker Container
+        run: docker run -d -p 8080:80 --name qa-login-container qa-login-app:v1
+
+      - name: Verify Application
+        run: |
+          sleep 5
+          curl -f http://localhost:8080
+
+      - name: QA Validation
+        run: |
+          echo "QA Validation Started"
+          echo "Application is accessible"
+          echo "Docker container is running"
+          echo "QA Validation Passed"
